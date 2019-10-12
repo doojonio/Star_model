@@ -1,4 +1,3 @@
-import numpy
 import math
 
 
@@ -15,7 +14,7 @@ class Star:
     rad = .0
     # Name
     name = 'star'
-    # Age
+    # Age in millions years
     age = 0
 
     # create star based on temperature(temp) and mass(mass)
