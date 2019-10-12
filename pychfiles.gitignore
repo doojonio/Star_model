@@ -1,4 +1,4 @@
 venv/
-.idea/
-__pycache__/
+*idea/
+*pycache*/
 graphics_star_back.py
