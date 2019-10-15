@@ -1,5 +1,5 @@
-import math
-
+from maturity import *
+import time
 
 class Star:
     # Luminosity in solar units(solar luminosity)
@@ -16,6 +16,8 @@ class Star:
     name = 'star'
     # Age in millions years
     age = 0
+    # Object for maturity
+    mat = None
 
     # create star based on temperature(temp) and mass(mass)
     def __init__(self, temp, mass):
@@ -24,18 +26,22 @@ class Star:
         self.mass = mass
         self.rad = Formula.calcRad(mass)
         self.lum = Formula.calcLum(mass)
+        self.mat = Maturity(self)
 
-    def printStar(self):
-        print("Star: {}".format(self.name))
-        print("Temperature: {}\nColor: {}\nLuminosity: {}\nMass: {}\n".format(self.temp,
-                                                                              self.color,
-                                                                              self.lum,
-                                                                              self.mass))
-
+    def __str__(self):
+        return (
+            f"Star: '{self.name}' \n"
+            f"Temperature: {self.temp} \n"
+            f"Color: {self.color} \n"
+            f"Luminosity: {self.lum} \n"
+            f"Mass: {self.mass} \n"
+            )
+    def growUp(self):
+        self.mat.growStar()
 
 class Formula:
     # Stefan–Boltzmann constant
-    sigma = 5.67 * (10 ** (-8))
+    sigma = 5.67e-8
     # Minimal temperature
     min_temp = 3500
     # Minimal star radius in solar units(solar radius)
@@ -50,12 +56,12 @@ class Formula:
     @staticmethod
     def calcColor(temp):
         return {
-            temp < 3500: "Isn't star's color",
-            3500 <= temp < 4500: 'Dark-red',
+            temp < 3500: "Black",
+            3500 <= temp < 4500: 'Dark_red',
             4500 <= temp < 6000: 'Red',
             6000 <= temp < 10000: 'Yellow',
             10000 <= temp < 25000: 'White',
-            25000 <= temp < 30000: 'Bluish white',
+            25000 <= temp < 30000: 'Bluish_white',
             temp >= 30000: 'Blue'
         }[1]
 
@@ -69,5 +75,3 @@ class Formula:
     def calcRad(mass):
         return mass ** 0.75
 
-star = Star(9940, 2.3)
-stop = 1
