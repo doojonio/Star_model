@@ -1,4 +1,5 @@
 from maturity import *
+from star_graphics import *
 import time
 
 class Star:
@@ -18,6 +19,8 @@ class Star:
     age = 0
     # Object for maturity
     mat = None
+    # Object for graphic
+    gshell = None
 
     # create star based on temperature(temp) and mass(mass)
     def __init__(self, temp, mass):
@@ -27,6 +30,7 @@ class Star:
         self.rad = Formula.calcRad(mass)
         self.lum = Formula.calcLum(mass)
         self.mat = Maturity(self)
+        self.gshell = Gshell(self)
 
     def __str__(self):
         return (
@@ -34,10 +38,12 @@ class Star:
             f"Temperature: {self.temp} \n"
             f"Color: {self.color} \n"
             f"Luminosity: {self.lum} \n"
+            f"Radius: {self.rad} \n"
             f"Mass: {self.mass} \n"
             )
     def growUp(self):
         self.mat.growStar()
+        self.gshell.update()
 
 class Formula:
     # Stefan–Boltzmann constant
@@ -74,4 +80,9 @@ class Formula:
     @staticmethod
     def calcRad(mass):
         return mass ** 0.75
+
+star = Star(5000., 2.3)
+for i in range (star.mat.n_iter):
+    print(star)
+    star.growUp()
 

@@ -1,4 +1,5 @@
 from setup import *
+import copy
 
 # Increasing age of the star
 class Maturity:
@@ -19,7 +20,7 @@ class Maturity:
         }[1]
 
     def calcNextStar(self, radCoef = 1, tempCoef = 1, lumCoef = 1, massCoef = 1):
-        self.next_star = self.star
+        self.next_star = copy.copy(self.star)
 
         self.next_star.rad *= radCoef
         self.next_star.temp *= tempCoef
@@ -39,8 +40,8 @@ class Maturity:
     def growStar(self):
         self.star.age += TIME_STEP
 
-        self.star.rad += (self.star.rad - self.next_star.rad)/self.n_iter
-        self.star.temp += (self.star.temp - self.next_star.temp)/self.n_iter
-        self.star.lum += (self.star.lum - self.next_star.lum)/self.n_iter
-        self.star.mass += (self.star.mass - self.next_star.mass)/self.n_iter
+        self.star.rad += (self.next_star.rad - self.star.rad)/self.n_iter
+        self.star.temp += (self.next_star.temp - self.star.temp)/self.n_iter
+        self.star.lum += (self.next_star.lum - self.star.lum)/self.n_iter
+        self.star.mass += (self.next_star.mass - self.star.mass )/self.n_iter
 
