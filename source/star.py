@@ -2,6 +2,7 @@ from maturity import *
 from star_graphics import *
 import time
 
+
 class Star:
     # Luminosity in solar units(solar luminosity)
     lum = .0
@@ -40,14 +41,14 @@ class Star:
             f"Luminosity: {self.lum} \n"
             f"Radius: {self.rad} \n"
             f"Mass: {self.mass} \n"
-            )
+        )
+
     def growUp(self):
         self.mat.growStar()
         self.gshell.update()
 
+
 class Formula:
-    # Stefan–Boltzmann constant
-    sigma = 5.67e-8
     # Minimal temperature
     min_temp = 3500
     # Minimal star radius in solar units(solar radius)
@@ -58,6 +59,7 @@ class Formula:
     min_lum = 10 ** (-4)
     # Maximum star luminosity in solar units(solar luminosity)
     max_lum = 10 ** 4
+
     # Calculate color(color) based on temperature(temp)
     @staticmethod
     def calcColor(temp):
@@ -81,8 +83,8 @@ class Formula:
     def calcRad(mass):
         return mass ** 0.75
 
+
 star = Star(5000., 2.3)
-for i in range (star.mat.n_iter):
+for i in range(star.mat.n_iter):
     print(star)
     star.growUp()
-
