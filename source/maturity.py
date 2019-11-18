@@ -1,47 +1,62 @@
-from setup import *
-import copy
+from stages.init_stage import Init
+from stages.mainseq_stage import Mainseq
+from stages.old_stage import Old
+from stages.dying_stage import Dying
+import conf
 
-# Increasing age of the star
+STAGE_ITERATIONS = conf.get_fvalue('SPEED', 'STAGE_ITERATIONS')
+
+
 class Maturity:
     star = None
-    next_star = None
-    n_iter = 0
-    stage = INIT_STAGE_NAME
-    initStageDuration = 0
+    asp_state = None
+    stage = None
+    cur_stage_dur = 0
+    step_years = 0
+    stage_threshold = 0
+    change_for_step = {
+        'lum': 0,
+        'rad': 0,
+        'temp': 0,
+        'mass': 0
+    }
 
     def __init__(self, star):
         self.star = star
-        self.calcInitStageDuration()
-        self.calcStage()
+        self.stage = Init(self.star)
+        self._update_values()
 
-    def calcStage(self):
+    def __str__(self):
+        return self.stage.name
+
+    def _update_values(self):
+        self.cur_stage_dur = self.stage.calc_duration()
+        self.asp_state = self.stage.calc_aspiration_state()
+        self.step_years = self.cur_stage_dur / STAGE_ITERATIONS
+        self.stage_threshold = self.star.age + self.cur_stage_dur
+
+        self.change_for_step['lum'] = (self.asp_state.lum - self.star.lum) / STAGE_ITERATIONS
+        self.change_for_step['rad'] = (self.asp_state.rad - self.star.rad) / STAGE_ITERATIONS
+        self.change_for_step['temp'] = (self.asp_state.temp - self.star.temp) / STAGE_ITERATIONS
+        self.change_for_step['mass'] = (self.asp_state.mass - self.star.mass) / STAGE_ITERATIONS
+
+    def _update_star_values(self):
+        self.star.lum += self.change_for_step['lum']
+        self.star.rad += self.change_for_step['rad']
+        self.star.temp += self.change_for_step['temp']
+        self.star.mass += self.change_for_step['mass']
+        self.star.age += self.step_years
+
+    def _set_stage(self):
         self.stage = {
-            self.star.age < self.initStageDuration: INIT_STAGE_NAME
+            self.stage.name == 'init'   : Mainseq(self.star),
+            self.stage.name == 'mainseq': Old(self.star),
+            self.stage.name == 'old'    : Dying(self.star)
         }[1]
 
-    def calcNextStar(self, radCoef = 1, tempCoef = 1, lumCoef = 1, massCoef = 1):
-        self.next_star = copy.copy(self.star)
-
-        self.next_star.rad *= radCoef
-        self.next_star.temp *= tempCoef
-        self.next_star.lum *= lumCoef
-        self.next_star.mass *= massCoef
-
-    def calcInitStageDuration(self):
-        if self.star.mass > 1:
-            self.initStageDuration = INIT_STAGE_STAND_DUR / (self.star.mass * INIT_STAGE_DUR_COEF)
-        elif self.star.mass < 1:
-            self.initStageDuration = (INIT_STAGE_DUR_COEF / self.star.mass) * INIT_STAGE_STAND_DUR
-        else:
-            self.initStageDuration = INIT_STAGE_STAND_DUR
-        self.n_iter = int(self.initStageDuration / TIME_STEP)
-        self.calcNextStar(STAR_RADIUS_DECREASE, STAR_TEMP_INCREASE, STAR_LUM_DECREASE)
-
-    def growStar(self):
-        self.star.age += TIME_STEP
-
-        self.star.rad += (self.next_star.rad - self.star.rad)/self.n_iter
-        self.star.temp += (self.next_star.temp - self.star.temp)/self.n_iter
-        self.star.lum += (self.next_star.lum - self.star.lum)/self.n_iter
-        self.star.mass += (self.next_star.mass - self.star.mass )/self.n_iter
+    def grow_star(self):
+        if self.star.age >= self.stage_threshold:
+            self._set_stage()
+            self._update_values()
+        self._update_star_values()
 

@@ -1,3 +1,7 @@
 .idea/
 __pycache__/
 venv/
+source/jupyter-version/
+source/__pycache__/
+source/.idea/
+source/trash/
