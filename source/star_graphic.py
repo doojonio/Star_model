@@ -1,7 +1,5 @@
 from graphics import *
 import conf
-import random
-from star import Star
 
 _WINDOW_NAME = conf.get_str('WINDOW', 'NAME')
 _WINDOW_HEIGHT = conf.get_intvalue('WINDOW', 'HEIGHT')
@@ -9,7 +7,6 @@ _WINDOW_WIDTH = conf.get_intvalue('WINDOW', 'WIDTH')
 _RAD_PIX = conf.get_fvalue('GRAPHIC', 'SOLAR_RADIUS_IN_PIXELS')
 LAB_X = conf.get_fvalue('WINDOW', 'LAB_X')
 LAB_Y = conf.get_fvalue('WINDOW', 'LAB_Y')
-ITERATIONS = 4 * conf.get_intvalue('SPEED', 'STAGE_ITERATIONS')
 
 CENTRE = Point(_WINDOW_WIDTH / 2, _WINDOW_HEIGHT / 2)
 
@@ -64,15 +61,3 @@ class GraphStarInfo:
         self.lab.setText(self.star.__str__())
 
 
-star = Star(5, 5, 4000, 11)
-graph_star = GraphStar(star)
-graph_star.draw(graph_window)
-graph_info = GraphStarInfo(star)
-graph_info.draw(graph_window)
-
-for i in range(ITERATIONS):
-    star.grow_up()
-    graph_star.update(graph_window)
-    graph_info.update(graph_window)
-    time.sleep(0.1)
-input()
